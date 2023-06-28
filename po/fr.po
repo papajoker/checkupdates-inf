@@ -13,7 +13,7 @@ msgstr ""
 
 #: main.go:71
 msgid "Database Local"
-msgstr "Données Locale"
+msgstr "Données locales"
 
 #: main.go:72
 msgid "Database Next"

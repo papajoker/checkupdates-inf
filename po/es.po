@@ -13,67 +13,67 @@ msgstr ""
 
 #: main.go:71
 msgid "Database Local"
-msgstr ""
+msgstr "Información local"
 
 #: main.go:72
 msgid "Database Next"
-msgstr ""
+msgstr "Información futuros"
 
 #: main.go:59
 msgid "Database directory"
-msgstr ""
+msgstr "Directorio"
 
 #: main.go:130
 msgid "Deleted packages but INSTALLED"
-msgstr ""
+msgstr "Paquetes eliminados PERO instalados"
 
 #: main.go:108
 msgid "Deleted packages"
-msgstr ""
+msgstr "Paquetes eliminados"
 
 #: alpm/db.go:86 alpm/db.go:182
 msgid "Error"
-msgstr ""
+msgstr "Error"
 
 #: main.go:156
 msgid "Is in AUR"
-msgstr ""
+msgstr "Está en"
 
 #: alpm/aur.go:30
 msgid "NO"
-msgstr ""
+msgstr "NO"
 
 #: main.go:81
 msgid "New packages"
-msgstr ""
+msgstr "Nuevos paquetes"
 
 #: main.go:28
 msgid "No color"
-msgstr ""
+msgstr "sin color"
 
 #: main.go:41
 msgid "Repos"
-msgstr ""
+msgstr "Depósito"
 
 #: main.go:63
 msgid "Updates"
-msgstr ""
+msgstr "Actualización"
 
 #: main.go:43
 msgid "command"
-msgstr ""
+msgstr "comando"
 
 #: alpm/db.go:125
 msgid "ignore duplicate"
-msgstr ""
+msgstr "ignora los duplicados"
 
 #: main.go:150
 msgid "replaced by"
-msgstr ""
+msgstr "sustituido por"
 
 #: alpm/db.go:161
 msgid "repo empty ? or all packages are ignored"
-msgstr ""
+msgstr "depósito vacío ?"
 
 #: main.go:29
 msgid "use fake for tests"
@@ -81,4 +81,4 @@ msgstr ""
 
 #: alpm/db.go:159
 msgid "warning"
-msgstr ""
+msgstr "Atención"
