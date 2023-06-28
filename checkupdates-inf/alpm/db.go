@@ -10,6 +10,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/leonelquinteros/gotext"
 )
 
 type (
@@ -28,8 +30,6 @@ type (
 
 	Packages map[string]*Package
 )
-
-//var pkgs Packages
 
 // parse desc file content
 func (p *Package) set(desc string) bool {
@@ -83,9 +83,11 @@ func getFieldArray(adesc tdesc, key string) []string {
 
 func ExtractTarGz(gzipStream io.Reader, pkgs Packages, repo string) Packages {
 
+	errMsg := gotext.Get("Error")
+
 	uncompressedStream, err := gzip.NewReader(gzipStream)
 	if err != nil {
-		fmt.Println("Error", err.Error())
+		fmt.Println(errMsg, err.Error())
 		return pkgs
 	}
 
@@ -98,7 +100,7 @@ func ExtractTarGz(gzipStream io.Reader, pkgs Packages, repo string) Packages {
 		}
 
 		if err != nil {
-			fmt.Println("Error", err.Error())
+			fmt.Println(errMsg, err.Error())
 			log.Fatalf("ExtractTarGz: Next() failed: %s", err.Error())
 		}
 
@@ -112,7 +114,7 @@ func ExtractTarGz(gzipStream io.Reader, pkgs Packages, repo string) Packages {
 			if _, err := buf.ReadFrom(tarReader); err != nil {
 				if err != io.EOF {
 					//nb = nb + 1
-					fmt.Println("error", err.Error())
+					fmt.Println(errMsg, err.Error())
 					log.Fatalf("ExtractTarGz:  failed: %s", err.Error())
 				}
 			}
@@ -120,13 +122,13 @@ func ExtractTarGz(gzipStream io.Reader, pkgs Packages, repo string) Packages {
 			pkg := Package{REPO: repo}
 			if pkg.set(buf.String()) {
 				if _, ok := pkgs["pkg.NAME"]; ok {
-					fmt.Printf("\t # ignore duplicate : %s\n", pkg.NAME)
+					fmt.Printf("\t # %s : %s\n", gotext.Get("ignore duplicate"), pkg.NAME)
 				} else {
 					pkgs[pkg.NAME] = &pkg
 				}
 			}
 		default:
-			fmt.Println("error def", header.Typeflag, header.Name)
+			fmt.Println(errMsg, "def", header.Typeflag, header.Name)
 			fmt.Printf("ExtractTarGz: uknown type: %v in %s\n", header.Typeflag, header.Name)
 			os.Exit(8)
 		}
@@ -148,7 +150,16 @@ func Load(dir string, repos []string) (pkgs Packages) {
 		defer f.Close()
 		pkgs = ExtractTarGz(f, pkgs, repo)
 		if len(pkgs)-nb == 0 {
-			fmt.Printf("warning: repo '%s' empty ? or all packages are ignored\n", repo)
+			sync := "sync"
+			if strings.Contains(dir, "/var/lib/") {
+				sync = "local"
+			}
+			fmt.Printf(
+				"%s: '%s' %s, %s\n",
+				gotext.Get("warning"),
+				repo, sync,
+				gotext.Get("repo empty ? or all packages are ignored"),
+			)
 		}
 		//fmt.Println(repo, len(pkgs)-nb, "packages")
 	}
@@ -167,12 +178,15 @@ func Replaced(name string, pkgs Packages) (pkg *Package, err bool) {
 }
 
 func LocalParse(directory string, searchs []*Package) (results []*Package, ok bool) {
+
+	errMsg := gotext.Get("Error")
+
 	matchs, err := filepath.Glob(directory + "/*/desc")
 	if err != nil {
-		fmt.Printf("ERROR ! %v", err)
+		fmt.Printf("%s ! %v", errMsg, err)
 	}
 	if len(matchs) < 1 {
-		fmt.Printf("ERROR ! %s empty ?", directory)
+		fmt.Printf("%s ! %s empty ?", errMsg, directory)
 	}
 	for _, f := range matchs {
 		for _, n := range searchs {

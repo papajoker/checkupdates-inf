@@ -1,0 +1,9 @@
+.gitignore
+.directory
+/divers
+/build
+/checkupdates-inf/checkupdates-inf
+/src/checkupdates-inf
+todo.txt
+*.gz
+*.po~
