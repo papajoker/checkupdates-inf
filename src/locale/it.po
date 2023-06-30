@@ -1,0 +1,84 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"PO-Revision-Date: 2023-06-28 14:26+0200\n"
+"Last-Translator: nobody <nobody@server.org>\n"
+"Language-Team: Italian <tp@lists.linux.it>\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: xgotext\n"
+
+#: main.go:72
+msgid "Database Local"
+msgstr ""
+
+#: main.go:71 main.go:73
+msgid "Database Next"
+msgstr ""
+
+#: main.go:59
+msgid "Database directory"
+msgstr ""
+
+#: main.go:131
+msgid "Deleted packages but INSTALLED"
+msgstr ""
+
+#: main.go:109
+msgid "Deleted packages"
+msgstr ""
+
+#: alpm/db.go:86 alpm/db.go:182
+msgid "Error"
+msgstr ""
+
+#: main.go:157
+msgid "Is in AUR"
+msgstr ""
+
+#: alpm/aur.go:30
+msgid "NO"
+msgstr "NO"
+
+#: main.go:82
+msgid "New packages"
+msgstr ""
+
+#: main.go:28
+msgid "No color"
+msgstr ""
+
+#: main.go:41
+msgid "Repos"
+msgstr ""
+
+#: main.go:63
+msgid "Updates"
+msgstr ""
+
+#: main.go:43
+msgid "command"
+msgstr ""
+
+#: alpm/db.go:125
+msgid "ignore duplicate"
+msgstr ""
+
+#: main.go:151
+msgid "replaced by"
+msgstr ""
+
+#: alpm/db.go:161
+msgid "repo empty ? or all packages are ignored"
+msgstr ""
+
+#: main.go:29
+msgid "use fake for tests"
+msgstr ""
+
+#: alpm/db.go:159
+msgid "warning"
+msgstr ""

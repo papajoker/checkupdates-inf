@@ -3,7 +3,7 @@
 /divers
 /build
 /checkupdates-inf/checkupdates-inf
-/src/checkupdates-inf
+/checkupdates-inf
 todo.txt
 *.gz
 *.po~

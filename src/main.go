@@ -8,8 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-
-	"github.com/leonelquinteros/gotext"
 )
 
 var (
@@ -19,14 +17,14 @@ var (
 	GitID     string
 )
 var (
-	localePath = "/usr/share/locale"
+	Lg Lang
 )
 
 func main() {
 
 	getV := flag.Bool("V", false, "version")
-	noUseColor := flag.Bool("nc", false, gotext.Get("No color"))
-	addFake := flag.Bool("fake", false, gotext.Get("use fake for tests"))
+	noUseColor := flag.Bool("nc", false, Lg.T("No color"))
+	addFake := flag.Bool("fake", false, Lg.T("use fake for tests"))
 	flag.Parse()
 	if *getV {
 		fmt.Println("checkupdates-inf")
@@ -38,9 +36,9 @@ func main() {
 	}
 
 	repos := alpm.ListRepos("/etc/pacman.conf")
-	fmt.Printf("%s : %v\n\n", gotext.Get("Repos"), repos)
+	fmt.Printf("%s : %v\n\n", Lg.T("Repos"), repos)
 
-	fmt.Printf("%vCheckupdates %s...%v\n\n", theme.ColorGray, gotext.Get("command"), theme.ColorNone)
+	fmt.Printf("%vCheckupdates %s...%v\n\n", theme.ColorGray, Lg.T("command"), theme.ColorNone)
 	updates := alpm.Checkupdates()
 	maxName := 12
 	for _, pkg := range updates {
@@ -56,11 +54,11 @@ func main() {
 	//updateskeys := alpm.UpdatesKeys(updates)
 
 	directory := fmt.Sprintf("/tmp/checkup-db-%d", os.Getuid())
-	fmt.Printf("\n%v#%s : %s%v\n\n", theme.ColorGray, gotext.Get("Database directory"), directory, theme.ColorNone)
+	fmt.Printf("\n%v#%s : %s%v\n\n", theme.ColorGray, Lg.T("Database directory"), directory, theme.ColorNone)
 	pkgsSync := alpm.Load(directory+"/sync", repos)
 	pkgsLocal := alpm.Load("/var/lib/pacman/sync", repos)
 
-	fmt.Printf("\n%s :\n", gotext.Get("Updates"))
+	fmt.Printf("\n%s :\n", Lg.T("Updates"))
 	for _, data := range updates {
 		if pkg, ok := pkgsLocal[data.Name]; ok {
 			fmt.Printf("  %v%-"+strconv.Itoa(maxName)+"s%v : %s %s\n", theme.ColorGreen, pkg.NAME, theme.ColorNone, pkg.Desc(56), pkg.URL)
@@ -68,9 +66,9 @@ func main() {
 	}
 	println()
 
-	l := strconv.Itoa(len(gotext.Get("Database Next")))
-	fmt.Printf("%-"+l+"s : %v%d%v\n", gotext.Get("Database Local"), theme.ColorGreen, len(pkgsLocal), theme.ColorNone)
-	fmt.Printf("%-"+l+"s : %v%d%v\n", gotext.Get("Database Next"), theme.ColorGreen, len(pkgsSync), theme.ColorNone)
+	l := strconv.Itoa(len(Lg.T("Database Next")))
+	fmt.Printf("%-"+l+"s : %v%d%v\n", Lg.T("Database Local"), theme.ColorGreen, len(pkgsLocal), theme.ColorNone)
+	fmt.Printf("%-"+l+"s : %v%d%v\n", Lg.T("Database Next"), theme.ColorGreen, len(pkgsSync), theme.ColorNone)
 
 	diff := []*alpm.Package{}
 	for k, pkg := range pkgsSync {
@@ -79,7 +77,7 @@ func main() {
 		}
 	}
 	if len(diff) > 0 {
-		fmt.Printf("\n%s :\n", gotext.Get("New packages"))
+		fmt.Printf("\n%s :\n", Lg.T("New packages"))
 		maxName := 12
 		for _, p := range diff {
 			if len(p.NAME) > maxName {
@@ -106,7 +104,7 @@ func main() {
 		pkgsSync["pacman"].ReplacedBy = "trucMuche!"
 	}
 	if len(diff) > 0 {
-		fmt.Printf("\n%s :\n", gotext.Get("Deleted packages"))
+		fmt.Printf("\n%s :\n", Lg.T("Deleted packages"))
 		maxName := 12
 		for _, p := range diff {
 			if len(p.NAME) > maxName {
@@ -128,7 +126,7 @@ func main() {
 		println()
 
 		if matchs, ok := alpm.LocalParse(directory+"/local", diff); ok {
-			fmt.Printf("\n%s :\n", gotext.Get("Deleted packages but INSTALLED"))
+			fmt.Printf("\n%s :\n", Lg.T("Deleted packages but INSTALLED"))
 			maxName := 12
 			for _, p := range matchs {
 				if len(p.NAME) > maxName {
@@ -148,13 +146,13 @@ func main() {
 					fmt.Printf(
 						"  %-"+strconv.Itoa(maxName)+"s -> %v%s%v (%s)\n",
 						" ", theme.ColorGreen, pkg.ReplacedBy, theme.ColorNone,
-						gotext.Get("replaced by"),
+						Lg.T("replaced by"),
 					)
 				} else {
 					desc := alpm.AurRequestExists(pkg.NAME)
 					fmt.Printf(
 						"  %-"+strconv.Itoa(maxName)+"s ? %s ... %s\n", "",
-						gotext.Get("Is in AUR"), desc,
+						Lg.T("Is in AUR"), desc,
 					)
 				}
 				fmt.Println("")
@@ -165,16 +163,5 @@ func main() {
 }
 
 func init() {
-	if envLocalePath := os.Getenv("LOCALE_PATH"); envLocalePath != "" {
-		localePath = envLocalePath
-	}
-	lang := os.Getenv("LANG")
-	if lc := os.Getenv("LANGUAGE"); lc != "" {
-		lang = lc
-	} else if lc := os.Getenv("LC_ALL"); lc != "" {
-		lang = lc
-	} else if lc := os.Getenv("LC_MESSAGES"); lc != "" {
-		lang = lc
-	}
-	gotext.Configure(localePath, lang, "checkupdates-inf")
+	Lg = NewLang()
 }
