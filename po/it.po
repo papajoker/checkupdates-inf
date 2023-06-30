@@ -41,7 +41,7 @@ msgstr ""
 
 #: alpm/aur.go:30
 msgid "NO"
-msgstr ""
+msgstr "NO"
 
 #: main.go:81
 msgid "New packages"

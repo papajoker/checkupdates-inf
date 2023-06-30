@@ -33,7 +33,7 @@ msgstr ""
 
 #: alpm/db.go:86 alpm/db.go:182
 msgid "Error"
-msgstr ""
+msgstr "Fehler"
 
 #: main.go:156
 msgid "Is in AUR"
@@ -41,7 +41,7 @@ msgstr ""
 
 #: alpm/aur.go:30
 msgid "NO"
-msgstr ""
+msgstr "NEIN"
 
 #: main.go:81
 msgid "New packages"

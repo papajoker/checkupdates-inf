@@ -13,11 +13,11 @@ msgstr ""
 
 #: main.go:71
 msgid "Database Local"
-msgstr "Información local"
+msgstr "Paquetes en la base de datos"
 
 #: main.go:72
 msgid "Database Next"
-msgstr "Información futuros"
+msgstr "Paquetes en la nueva base de datos"
 
 #: main.go:59
 msgid "Database directory"
@@ -25,11 +25,11 @@ msgstr "Directorio"
 
 #: main.go:130
 msgid "Deleted packages but INSTALLED"
-msgstr "Paquetes eliminados PERO instalados"
+msgstr "Paquetes borrados PERO instalados"
 
 #: main.go:108
 msgid "Deleted packages"
-msgstr "Paquetes eliminados"
+msgstr "Paquetes borrados"
 
 #: alpm/db.go:86 alpm/db.go:182
 msgid "Error"
@@ -53,7 +53,7 @@ msgstr "sin color"
 
 #: main.go:41
 msgid "Repos"
-msgstr "Depósito"
+msgstr "Repositorios"
 
 #: main.go:63
 msgid "Updates"
