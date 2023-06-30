@@ -11,11 +11,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: xgotext\n"
 
-#: main.go:71
+#: main.go:72
 msgid "Database Local"
 msgstr "Paquets en local"
 
-#: main.go:72
+#: main.go:71 main.go:73
 msgid "Database Next"
 msgstr "Paquets après mise à jour"
 
@@ -23,11 +23,11 @@ msgstr "Paquets après mise à jour"
 msgid "Database directory"
 msgstr "Répertoire des Données"
 
-#: main.go:130
+#: main.go:131
 msgid "Deleted packages but INSTALLED"
 msgstr "Paquets supprimés MAIS installés"
 
-#: main.go:108
+#: main.go:109
 msgid "Deleted packages"
 msgstr "Paquets supprimés prochainement"
 
@@ -35,7 +35,7 @@ msgstr "Paquets supprimés prochainement"
 msgid "Error"
 msgstr "Erreur"
 
-#: main.go:156
+#: main.go:157
 msgid "Is in AUR"
 msgstr "Est dans AUR"
 
@@ -43,7 +43,7 @@ msgstr "Est dans AUR"
 msgid "NO"
 msgstr "NON"
 
-#: main.go:81
+#: main.go:82
 msgid "New packages"
 msgstr "Nouveaux paquets"
 
@@ -67,7 +67,7 @@ msgstr "commande"
 msgid "ignore duplicate"
 msgstr "ignorer les paquets en double dans différents dépôts"
 
-#: main.go:150
+#: main.go:151
 msgid "replaced by"
 msgstr "remplacé par"
 

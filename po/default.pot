@@ -7,11 +7,12 @@ msgstr ""
 "Language: \n"
 "X-Generator: xgotext\n"
 
-#: main.go:71
+#: main.go:72
 msgid "Database Local"
 msgstr ""
 
-#: main.go:72
+#: main.go:71
+#: main.go:73
 msgid "Database Next"
 msgstr ""
 
@@ -19,11 +20,11 @@ msgstr ""
 msgid "Database directory"
 msgstr ""
 
-#: main.go:130
+#: main.go:131
 msgid "Deleted packages but INSTALLED"
 msgstr ""
 
-#: main.go:108
+#: main.go:109
 msgid "Deleted packages"
 msgstr ""
 
@@ -32,7 +33,7 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: main.go:156
+#: main.go:157
 msgid "Is in AUR"
 msgstr ""
 
@@ -40,7 +41,7 @@ msgstr ""
 msgid "NO"
 msgstr ""
 
-#: main.go:81
+#: main.go:82
 msgid "New packages"
 msgstr ""
 
@@ -64,7 +65,7 @@ msgstr ""
 msgid "ignore duplicate"
 msgstr ""
 
-#: main.go:150
+#: main.go:151
 msgid "replaced by"
 msgstr ""
 
