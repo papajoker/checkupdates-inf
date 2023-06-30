@@ -49,7 +49,7 @@ cd ..
     rm "${project}_${version}_linux-64bit.tar.gz"
 if [[ "$1" == "-c" ]]; then
     upx -9 "${project}"
-    tar -czvf "${project}_${version}_linux-64bit.tar.gz" "./${project}" "./${project}"
+    tar -czvf "${project}_${version}_linux-64bit.tar.gz" "./${project}"
 fi
 
 echo
