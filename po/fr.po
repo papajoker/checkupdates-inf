@@ -13,11 +13,11 @@ msgstr ""
 
 #: main.go:71
 msgid "Database Local"
-msgstr "Données locales"
+msgstr "Paquets en local"
 
 #: main.go:72
 msgid "Database Next"
-msgstr "Données prochaines"
+msgstr "Paquets après mise à jour"
 
 #: main.go:59
 msgid "Database directory"
@@ -25,11 +25,11 @@ msgstr "Répertoire des Données"
 
 #: main.go:130
 msgid "Deleted packages but INSTALLED"
-msgstr "paquets supprimés MAIS installés"
+msgstr "Paquets supprimés MAIS installés"
 
 #: main.go:108
 msgid "Deleted packages"
-msgstr "paquets supprimés prochainement"
+msgstr "Paquets supprimés prochainement"
 
 #: alpm/db.go:86 alpm/db.go:182
 msgid "Error"

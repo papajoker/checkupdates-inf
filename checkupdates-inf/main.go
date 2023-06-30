@@ -68,8 +68,9 @@ func main() {
 	}
 	println()
 
-	fmt.Printf("%-21s : %v%d%v\n", gotext.Get("Database Local"), theme.ColorGreen, len(pkgsLocal), theme.ColorNone)
-	fmt.Printf("%-21s : %v%d%v\n", gotext.Get("Database Next"), theme.ColorGreen, len(pkgsSync), theme.ColorNone)
+	l := strconv.Itoa(len(gotext.Get("Database Next")))
+	fmt.Printf("%-"+l+"s : %v%d%v\n", gotext.Get("Database Local"), theme.ColorGreen, len(pkgsLocal), theme.ColorNone)
+	fmt.Printf("%-"+l+"s : %v%d%v\n", gotext.Get("Database Next"), theme.ColorGreen, len(pkgsSync), theme.ColorNone)
 
 	diff := []*alpm.Package{}
 	for k, pkg := range pkgsSync {
