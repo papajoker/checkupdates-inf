@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 )
 
 var (
@@ -24,7 +25,7 @@ func main() {
 
 	getV := flag.Bool("V", false, "version")
 	noUseColor := flag.Bool("nc", false, Lg.T("No color"))
-	addFake := flag.Bool("fake", false, Lg.T("use fake for tests"))
+	addFakes := flag.String("fakes", "", Lg.T("fake packages deleted")+" (-fakes 'chromium firefox mariadb vi nano pikaur')")
 	flag.Parse()
 	if *getV {
 		fmt.Println("checkupdates-inf")
@@ -48,6 +49,10 @@ func main() {
 	pkgsLocal := alpm.Load("/var/lib/pacman/sync", repos)
 
 	DisplayUpdates(updates, pkgsSync, strconv.Itoa(maxName))
+
+	for _, k := range strings.Split(*addFakes, " ") {
+		delete(pkgsSync, k)
+	}
 
 	l := strconv.Itoa(len(Lg.T("Database Next")))
 	fmt.Printf("%-"+l+"s : %v%d%v\n", Lg.T("Database Local"), theme.ColorGreen, len(pkgsLocal), theme.ColorNone)
@@ -83,14 +88,16 @@ func main() {
 		}
 	}
 
-	if *addFake {
-		diff = append(diff, &alpm.Package{NAME: "pacman", DESC: "FAKE", ReplacedBy: "pacman-plus"})
-		diff = append(diff, &alpm.Package{NAME: "yay-bin", DESC: "FAKE", ReplacedBy: ""})
-		diff = append(diff, &alpm.Package{NAME: "yay", DESC: "FAKE", ReplacedBy: ""})
-		diff = append(diff, &alpm.Package{NAME: "systemd", DESC: "FAKE", ReplacedBy: ""})
-		diff = append(diff, &alpm.Package{NAME: "mariadb", DESC: "FAKE", ReplacedBy: ""})
-		pkgsSync["pacman"].ReplacedBy = "trucMuche!"
-	}
+	/*
+		if *addFake {
+			diff = append(diff, &alpm.Package{NAME: "pacman", DESC: "FAKE", ReplacedBy: "pacman-plus"})
+			diff = append(diff, &alpm.Package{NAME: "yay-bin", DESC: "FAKE", ReplacedBy: ""})
+			diff = append(diff, &alpm.Package{NAME: "yay", DESC: "FAKE", ReplacedBy: ""})
+			diff = append(diff, &alpm.Package{NAME: "systemd", DESC: "FAKE", ReplacedBy: ""})
+			diff = append(diff, &alpm.Package{NAME: "mariadb", DESC: "FAKE", ReplacedBy: ""})
+			pkgsSync["pacman"].ReplacedBy = "trucMuche!"
+		}
+	*/
 	if len(diff) > 0 {
 		fmt.Printf("\n%s :\n", Lg.T("Deleted packages"))
 		maxName := 12
@@ -139,11 +146,14 @@ func main() {
 						Lg.T("replaced by"),
 					)
 				} else {
-					desc := alpm.AurRequestExists(pkg.NAME)
-					fmt.Printf(
-						"  %-"+strconv.Itoa(maxName)+"s ? %s ... %s\n", "",
-						Lg.T("Is in AUR"), desc,
-					)
+					if len(matchs) < 40 {
+						desc := alpm.AurRequestExists(pkg.NAME)
+						desc = Lg.T(desc)
+						fmt.Printf(
+							"  %-"+strconv.Itoa(maxName)+"s ? %s ... %s\n", "",
+							Lg.T("Is in AUR"), desc,
+						)
+					}
 				}
 
 				if pkg.ReplacedBy == "" {

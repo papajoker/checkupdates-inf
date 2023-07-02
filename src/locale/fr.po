@@ -79,9 +79,9 @@ msgstr "peut être remplacé par"
 msgid "repo empty ? or all packages are ignored"
 msgstr "dépôt vide ? ou tous les paquets sont ignorés"
 
-#: main.go:29
-msgid "use fake for tests"
-msgstr "POUR TESTS, utilise de faux paquets"
+#: main.go:28
+msgid "fake packages deleted"
+msgstr "POUR TESTS, paquets faussement supprimés des dépôts"
 
 #: alpm/db.go:159
 msgid "warning"

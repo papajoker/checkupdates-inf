@@ -77,8 +77,8 @@ msgstr ""
 msgid "repo empty ? or all packages are ignored"
 msgstr ""
 
-#: main.go:29
-msgid "use fake for tests"
+#: main.go:28
+msgid "fake packages deleted"
 msgstr ""
 
 #: alpm/db.go:159

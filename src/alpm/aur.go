@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"github.com/leonelquinteros/gotext"
+	"strings"
 )
 
 const url = "https://aur.archlinux.org/rpc/?v=5&type=info&by=name&arg="
@@ -27,7 +26,18 @@ type responce struct {
 }
 
 func AurRequestExists(pkgname string) (rurl string) {
-	no := gotext.Get("NO")
+	for _, e := range [3]string{"", "-bin", "-git"} {
+		rurl = aurRequest(pkgname + e)
+		if strings.HasPrefix(rurl, "http") {
+			return rurl
+		}
+	}
+	return rurl
+}
+
+func aurRequest(pkgname string) string {
+	no := "NO"
+
 	resp, err := http.Get(url + pkgname)
 	if err != nil {
 		fmt.Println(err)
@@ -37,7 +47,6 @@ func AurRequestExists(pkgname string) (rurl string) {
 
 	r := responce{}
 	err = json.NewDecoder(resp.Body).Decode(&r)
-
 	if err != nil {
 		fmt.Println(err)
 		return no
