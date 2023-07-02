@@ -67,9 +67,13 @@ msgstr "comando"
 msgid "ignore duplicate"
 msgstr "ignora los duplicados"
 
-#: main.go:151
+#: main.go:138
 msgid "replaced by"
 msgstr "sustituido por"
+
+#: main.go:151
+msgid "can replace by"
+msgstr ""
 
 #: alpm/db.go:161
 msgid "repo empty ? or all packages are ignored"

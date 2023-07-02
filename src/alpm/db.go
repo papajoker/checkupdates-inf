@@ -24,6 +24,7 @@ type (
 		REPO     string
 		URL      string
 		REPLACES []string
+		PROVIDES []string
 
 		ReplacedBy string
 	}
@@ -44,15 +45,13 @@ func (p *Package) set(desc string) bool {
 			adesc[idx] = make([]string, 0)
 		}
 	}
-	/*for k,v := range adesc {
-		fmt.Println(k, "->", v)
-	}*/
 
 	p.VERSION = getFieldString(adesc, "VERSION")
 	p.NAME = getFieldString(adesc, "NAME")
 	p.DESC = getFieldString(adesc, "DESC")
 	p.URL = getFieldString(adesc, "URL")
 	p.REPLACES = getFieldArray(adesc, "REPLACES")
+	p.PROVIDES = getFieldArray(adesc, "PROVIDES")
 	return true
 }
 
@@ -166,15 +165,35 @@ func Load(dir string, repos []string) (pkgs Packages) {
 	return pkgs
 }
 
-func Replaced(name string, pkgs Packages) (pkg *Package, err bool) {
+func Replaced(pkgName string, pkgs Packages) (pkg *Package, err bool) {
 	for _, pkg := range pkgs {
 		for _, alias := range pkg.REPLACES {
-			if name == alias {
+			if pkgName == alias {
 				return pkg, true
 			}
 		}
 	}
 	return nil, false
+}
+
+func ProvideBy(pkgName string, pkgs Packages) (provides []string, ok bool) {
+	for _, pkg := range pkgs {
+		for _, alias := range pkg.PROVIDES {
+			if strings.Contains(alias, ".so") {
+				continue
+			}
+			alias = func(s string) string {
+				if matchs := strings.SplitN(s, "=", 2); len(matchs) > 1 {
+					s = matchs[0]
+				}
+				return s
+			}(alias)
+			if pkgName == alias {
+				provides = append(provides, pkg.NAME)
+			}
+		}
+	}
+	return provides, len(provides) > 0
 }
 
 func LocalParse(directory string, searchs []*Package) (results []*Package, ok bool) {

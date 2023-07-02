@@ -67,8 +67,12 @@ msgstr ""
 msgid "ignore duplicate"
 msgstr ""
 
-#: main.go:151
+#: main.go:138
 msgid "replaced by"
+msgstr ""
+
+#: main.go:151
+msgid "can replace by"
 msgstr ""
 
 #: alpm/db.go:161

@@ -88,6 +88,7 @@ func main() {
 		diff = append(diff, &alpm.Package{NAME: "yay-bin", DESC: "FAKE", ReplacedBy: ""})
 		diff = append(diff, &alpm.Package{NAME: "yay", DESC: "FAKE", ReplacedBy: ""})
 		diff = append(diff, &alpm.Package{NAME: "systemd", DESC: "FAKE", ReplacedBy: ""})
+		diff = append(diff, &alpm.Package{NAME: "mariadb", DESC: "FAKE", ReplacedBy: ""})
 		pkgsSync["pacman"].ReplacedBy = "trucMuche!"
 	}
 	if len(diff) > 0 {
@@ -130,6 +131,7 @@ func main() {
 					"  %v%-"+strconv.Itoa(maxName)+"s%v : %s %s\n",
 					color, pkg.NAME, theme.ColorNone, pkg.DESC, pkg.URL,
 				)
+
 				if pkg.ReplacedBy != "" {
 					fmt.Printf(
 						"  %-"+strconv.Itoa(maxName)+"s -> %v%s%v (%s)\n",
@@ -142,6 +144,15 @@ func main() {
 						"  %-"+strconv.Itoa(maxName)+"s ? %s ... %s\n", "",
 						Lg.T("Is in AUR"), desc,
 					)
+				}
+
+				if pkg.ReplacedBy == "" {
+					if provides, ok := alpm.ProvideBy(pkg.NAME, pkgsSync); ok {
+						fmt.Printf(
+							"  %-"+strconv.Itoa(maxName)+"s   %s: %v\n", "",
+							Lg.T("can replace by"), provides,
+						)
+					}
 				}
 				fmt.Println("")
 			}
