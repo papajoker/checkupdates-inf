@@ -39,32 +39,15 @@ func main() {
 	fmt.Printf("%s : %v\n\n", Lg.T("Repos"), repos)
 
 	fmt.Printf("%vCheckupdates %s...%v\n\n", theme.ColorGray, Lg.T("command"), theme.ColorNone)
-	updates := alpm.Checkupdates()
-	maxName := 12
-	for _, pkg := range updates {
-		if len(pkg.Name) > maxName {
-			maxName = len(pkg.Name)
-		}
-	}
-	for _, p := range updates {
-		a, _ := alpm.VersionColor(p.Version, p.VersionLocal, theme.ColorWarning)
-		b, prefix := alpm.VersionColor(p.VersionLocal, p.Version, theme.ColorGreen)
-		fmt.Printf("%-"+strconv.Itoa(maxName)+"s  %32s -> %s\t%s\n", p.Name, a, b, prefix)
-	}
-	//updateskeys := alpm.UpdatesKeys(updates)
+	updates, keysUpdates := alpm.Checkupdates()
+	maxName := DisplayVersions(updates, keysUpdates)
 
 	directory := fmt.Sprintf("/tmp/checkup-db-%d", os.Getuid())
 	fmt.Printf("\n%v#%s : %s%v\n\n", theme.ColorGray, Lg.T("Database directory"), directory, theme.ColorNone)
 	pkgsSync := alpm.Load(directory+"/sync", repos)
 	pkgsLocal := alpm.Load("/var/lib/pacman/sync", repos)
 
-	fmt.Printf("\n%s :\n", Lg.T("Updates"))
-	for _, data := range updates {
-		if pkg, ok := pkgsLocal[data.Name]; ok {
-			fmt.Printf("  %v%-"+strconv.Itoa(maxName)+"s%v : %s %s\n", theme.ColorGreen, pkg.NAME, theme.ColorNone, pkg.Desc(56), pkg.URL)
-		}
-	}
-	println()
+	DisplayUpdates(updates, pkgsSync, strconv.Itoa(maxName))
 
 	l := strconv.Itoa(len(Lg.T("Database Next")))
 	fmt.Printf("%-"+l+"s : %v%d%v\n", Lg.T("Database Local"), theme.ColorGreen, len(pkgsLocal), theme.ColorNone)
@@ -84,8 +67,12 @@ func main() {
 				maxName = len(p.NAME)
 			}
 		}
+		tpl := "  %v%-" + strconv.Itoa(maxName) + "s%v : %s %s\n"
 		for _, pkg := range diff {
-			fmt.Printf("  %v%-"+strconv.Itoa(maxName)+"s%v : %s %s\n", theme.ColorGreen, pkg.NAME, theme.ColorNone, pkg.DESC, pkg.URL)
+			fmt.Printf(
+				tpl,
+				theme.ColorGreen, pkg.NAME, theme.ColorNone, pkg.DESC, pkg.URL,
+			)
 		}
 	}
 
@@ -111,6 +98,7 @@ func main() {
 				maxName = len(p.NAME)
 			}
 		}
+		tpl := "  %v%-" + strconv.Itoa(maxName) + "s%v : %s %s %s\n"
 		for _, pkg := range diff {
 			replace := ""
 			if replaced, ok := alpm.Replaced(pkg.NAME, pkgsSync); ok {
@@ -118,7 +106,7 @@ func main() {
 				replace = fmt.Sprintf(" -> %v%s%v", theme.ColorGreen, replaced.NAME, theme.ColorNone)
 			}
 			fmt.Printf(
-				"  %v%-"+strconv.Itoa(maxName)+"s%v : %s %s %s\n",
+				tpl,
 				theme.ColorWarning, pkg.NAME, theme.ColorNone, pkg.Desc(56), pkg.URL,
 				replace,
 			)
@@ -164,4 +152,49 @@ func main() {
 
 func init() {
 	Lg = NewLang()
+}
+
+// print Checkupdates output
+func DisplayVersions(updates []alpm.CheckupdatesOutput, keys []*string) int {
+	const mini = 18
+	if len(updates) < 1 {
+		return mini
+	}
+	headers := make([]int, 3)
+	for _, p := range updates {
+		sizes := p.Sizes(mini)
+		for k := range headers {
+			if sizes[k] > headers[k] {
+				headers[k] = sizes[k]
+			}
+		}
+	}
+	tpl := "%-" + strconv.Itoa(headers[0]) + "s  %" + strconv.Itoa(headers[1]) + "s -> %-" + strconv.Itoa(headers[2]) + "s\t%s\n"
+	for _, p := range updates {
+		a, _ := alpm.VersionColor(p.Version, p.VersionLocal, theme.ColorWarning)
+		b, epoch := alpm.VersionColor(p.VersionLocal, p.Version, theme.ColorGreen)
+		fmt.Printf(
+			tpl,
+			p.Name, a, b, epoch,
+		)
+	}
+	return headers[0]
+}
+
+// display packages detail to update
+func DisplayUpdates(updates []alpm.CheckupdatesOutput, pkgs alpm.Packages, size string) {
+	if len(updates) < 1 {
+		return
+	}
+	fmt.Printf("\n%s :\n", Lg.T("Updates"))
+	tpl := "  %v%-" + size + "s%v : %s %s\n"
+	for _, p := range updates {
+		if pkg, ok := pkgs[p.Name]; ok {
+			fmt.Printf(
+				tpl,
+				theme.ColorGreen, pkg.NAME, theme.ColorNone, pkg.Desc(56), pkg.URL,
+			)
+		}
+	}
+	println()
 }

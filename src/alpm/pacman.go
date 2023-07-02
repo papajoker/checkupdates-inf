@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"bytes"
 	"checkupdates-inf/theme"
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
+	"sort"
 	"strings"
 )
 
@@ -17,26 +17,35 @@ type CheckupdatesOutput struct {
 	Version      string
 }
 
-func (c CheckupdatesOutput) String() string {
-	a, _ := VersionColor(c.Version, c.VersionLocal, theme.ColorWarning)
-	b, prefix := VersionColor(c.VersionLocal, c.Version, theme.ColorGreen)
-	return fmt.Sprintf("%-32s %24s -> %s\t%s", c.Name, a, b, prefix)
+func (c CheckupdatesOutput) Sizes(mini int) (sizes [3]int) {
+	sizes[0] = len(c.Name)
+	sizes[1] = len(c.Version + theme.ColorGreen + theme.ColorNone)
+	sizes[2] = len(c.VersionLocal + theme.ColorGreen + theme.ColorNone)
+	for k := range sizes {
+		if sizes[k] < mini {
+			sizes[k] = mini
+		}
+	}
+	return sizes
 }
 
-func VersionColor(installed, next_version string, color string) (v string, prefix string) {
-	prefix = ""
-	matchs := strings.SplitN(installed, ":", 2)
-	if len(matchs) > 1 {
-		prefix = "(" + matchs[0] + ":)"
-		installed = matchs[1]
+func realVersion(version string) (string, string) {
+	if matchs := strings.SplitN(version, ":", 2); len(matchs) > 1 {
+		return matchs[1], "(" + matchs[0] + ":)"
 	}
-	matchs = strings.SplitN(next_version, ":", 2)
-	if len(matchs) > 1 {
-		if prefix == "" {
-			prefix = "(" + matchs[0] + ":)"
+	return version, ""
+}
+
+func VersionColor(installed, next_version string, color string) (v string, epoch string) {
+
+	installed, epoch = realVersion(installed)
+	if matchs := strings.SplitN(next_version, ":", 2); len(matchs) > 1 {
+		if epoch == "" {
+			epoch = "(" + matchs[0] + ":)"
 		}
 		next_version = matchs[1]
 	}
+
 	for i := range installed {
 		if i >= len(next_version) {
 			break
@@ -45,14 +54,11 @@ func VersionColor(installed, next_version string, color string) (v string, prefi
 			next_version = next_version[0:i] + color + next_version[i:]
 			break
 		}
-		//except IndexError:
-		//	break
 	}
 	v = next_version + theme.ColorNone
-	return v, prefix
+	return v, epoch
 }
 
-// confn = "/etc/pacman.conf"
 func ListRepos(confName string) (repos []string) {
 	file, err := os.Open(confName)
 	if err != nil {
@@ -74,12 +80,11 @@ func ListRepos(confName string) (repos []string) {
 	return repos
 }
 
-func Checkupdates() (versions []CheckupdatesOutput) {
+func Checkupdates() (versions []CheckupdatesOutput, keys []*string) {
 	var buffer bytes.Buffer
 	cmd := exec.Command("checkupdates")
 	cmd.Stdout = &buffer
 	_ = cmd.Run()
-	// log.Printf("checkupdate output: %s", buffer.String())
 	out := buffer.String()
 	for _, s := range strings.Split(out, "\n") {
 		if len(s) < 2 {
@@ -91,7 +96,12 @@ func Checkupdates() (versions []CheckupdatesOutput) {
 		}
 		versions = append(versions, CheckupdatesOutput{data[0], data[1], data[3]})
 	}
-	return versions
+	sort.SliceStable(versions, func(i, j int) bool { return versions[i].Name < versions[j].Name })
+	keys = make([]*string, len(versions))
+	for _, v := range versions {
+		keys = append(keys, &v.Name)
+	}
+	return versions, keys
 }
 
 func UpdatesKeys(versions []CheckupdatesOutput) (keys []string) {
