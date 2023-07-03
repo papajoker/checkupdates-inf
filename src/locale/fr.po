@@ -86,3 +86,15 @@ msgstr "POUR TESTS, paquets faussement supprimés des dépôts"
 #: alpm/db.go:159
 msgid "warning"
 msgstr "Attention"
+
+#: main.go:27
+msgid "Download packages"
+msgstr "Télécharger les paquets"
+
+#: main.go:44
+msgid "you cannot perform this operation unless you are root"
+msgstr "vous ne pouvez effectuer cette opération qu’en mode administrateur"
+
+#: pacman.go:148
+msgid "Shell error"
+msgstr "Erreur shell"

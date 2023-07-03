@@ -2,13 +2,17 @@ package alpm
 
 import (
 	"bufio"
-	"bytes"
 	"checkupdates-inf/theme"
+	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/exec"
 	"sort"
 	"strings"
+	"sync"
+
+	"github.com/leonelquinteros/gotext"
 )
 
 type CheckupdatesOutput struct {
@@ -80,28 +84,64 @@ func ListRepos(confName string) (repos []string) {
 	return repos
 }
 
-func Checkupdates() (versions []CheckupdatesOutput, keys []*string) {
-	var buffer bytes.Buffer
-	cmd := exec.Command("checkupdates")
-	cmd.Stdout = &buffer
-	_ = cmd.Run()
-	out := buffer.String()
-	for _, s := range strings.Split(out, "\n") {
-		if len(s) < 2 {
-			continue
+func runCmd(cmdstr string, tee bool) (versions []CheckupdatesOutput, err error) {
+
+	args := strings.Fields(cmdstr)
+	cmd := exec.Command(args[0], args[1:]...)
+
+	var stdout io.ReadCloser
+	stdout, err = cmd.StdoutPipe()
+	if err != nil {
+		return versions, err
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	scanner := bufio.NewScanner(stdout)
+	go func() {
+		capture := true
+		for scanner.Scan() {
+
+			line := scanner.Text()
+			if tee && !strings.HasPrefix(line, ":") {
+				fmt.Println(scanner.Text())
+			}
+
+			if capture {
+				args = strings.Fields(line)
+				if len(args) == 4 && args[2] == "->" {
+					versions = append(versions, CheckupdatesOutput{args[0], args[1], args[3]})
+				} else {
+					capture = false
+					// continue for "tee"
+				}
+			}
 		}
-		data := strings.Split(s, " ")
-		if len(data) != 4 {
-			continue
-		}
-		versions = append(versions, CheckupdatesOutput{data[0], data[1], data[3]})
+		wg.Done()
+	}()
+
+	if err = cmd.Start(); err != nil {
+		return versions, err
+	}
+
+	wg.Wait()
+
+	return versions, cmd.Wait()
+}
+
+func Checkupdates(download bool) (versions []CheckupdatesOutput) {
+	cmd := "checkupdates"
+	if download {
+		cmd += " -d"
+	}
+	versions, err := runCmd(cmd, download)
+	if err != nil {
+		fmt.Println(gotext.Get("Shell error"), ":", err.Error())
 	}
 	sort.SliceStable(versions, func(i, j int) bool { return versions[i].Name < versions[j].Name })
-	keys = make([]*string, len(versions))
-	for _, v := range versions {
-		keys = append(keys, &v.Name)
-	}
-	return versions, keys
+
+	return versions
 }
 
 func UpdatesKeys(versions []CheckupdatesOutput) (keys []string) {

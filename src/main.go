@@ -23,7 +23,8 @@ var (
 
 func main() {
 
-	getV := flag.Bool("V", false, "version")
+	getV := flag.Bool("V", false, "Version")
+	flagDownload := flag.Bool("d", false, Lg.T("Download packages"))
 	noUseColor := flag.Bool("nc", false, Lg.T("No color"))
 	addFakes := flag.String("fakes", "", Lg.T("fake packages deleted")+" (-fakes 'chromium firefox mariadb vi nano pikaur')")
 	flag.Parse()
@@ -39,9 +40,15 @@ func main() {
 	repos := alpm.ListRepos("/etc/pacman.conf")
 	fmt.Printf("%s : %v\n\n", Lg.T("Repos"), repos)
 
+	if *flagDownload && os.Getuid() != 0 {
+		println(Lg.T("Error"), Lg.T("you cannot perform this operation unless you are root"+"."))
+		os.Exit(2)
+	}
+
 	fmt.Printf("%vCheckupdates %s...%v\n\n", theme.ColorGray, Lg.T("command"), theme.ColorNone)
-	updates, keysUpdates := alpm.Checkupdates()
-	maxName := DisplayVersions(updates, keysUpdates)
+	updates := alpm.Checkupdates(*flagDownload)
+	println("\n")
+	maxName := DisplayVersions(updates)
 
 	directory := fmt.Sprintf("/tmp/checkup-db-%d", os.Getuid())
 	fmt.Printf("\n%v#%s : %s%v\n\n", theme.ColorGray, Lg.T("Database directory"), directory, theme.ColorNone)
@@ -50,7 +57,7 @@ func main() {
 
 	DisplayUpdates(updates, pkgsSync, strconv.Itoa(maxName))
 
-	for _, k := range strings.Split(*addFakes, " ") {
+	for _, k := range strings.Fields(*addFakes) {
 		delete(pkgsSync, k)
 	}
 
@@ -176,7 +183,7 @@ func init() {
 }
 
 // print Checkupdates output
-func DisplayVersions(updates []alpm.CheckupdatesOutput, keys []*string) int {
+func DisplayVersions(updates []alpm.CheckupdatesOutput) int {
 	const mini = 18
 	if len(updates) < 1 {
 		return mini
@@ -207,7 +214,7 @@ func DisplayUpdates(updates []alpm.CheckupdatesOutput, pkgs alpm.Packages, size 
 	if len(updates) < 1 {
 		return
 	}
-	fmt.Printf("\n%s :\n", Lg.T("Updates"))
+	fmt.Printf("\n%d %s :\n", len(updates), Lg.T("Updates"))
 	tpl := "  %v%-" + size + "s%v : %s %s\n"
 	for _, p := range updates {
 		if pkg, ok := pkgs[p.Name]; ok {

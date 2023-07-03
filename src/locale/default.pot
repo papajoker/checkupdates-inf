@@ -84,3 +84,15 @@ msgstr ""
 #: alpm/db.go:159
 msgid "warning"
 msgstr ""
+
+#: main.go:27
+msgid "Download packages"
+msgstr ""
+
+#: main.go:44
+msgid "you cannot perform this operation unless you are root"
+msgstr ""
+
+#: pacman.go:148
+msgid "Shell error"
+msgstr ""

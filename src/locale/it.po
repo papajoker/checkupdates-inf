@@ -33,7 +33,7 @@ msgstr ""
 
 #: alpm/db.go:86 alpm/db.go:182
 msgid "Error"
-msgstr ""
+msgstr "Errore"
 
 #: main.go:157
 msgid "Is in AUR"
@@ -49,7 +49,7 @@ msgstr ""
 
 #: main.go:28
 msgid "No color"
-msgstr ""
+msgstr "nessun colore"
 
 #: main.go:41
 msgid "Repos"
@@ -85,4 +85,16 @@ msgstr ""
 
 #: alpm/db.go:159
 msgid "warning"
+msgstr ""
+
+#: main.go:27
+msgid "Download packages"
+msgstr "Scarica i pacchetti"
+
+#: main.go:44
+msgid "you cannot perform this operation unless you are root"
+msgstr ""
+
+#: pacman.go:148
+msgid "Shell error"
 msgstr ""
