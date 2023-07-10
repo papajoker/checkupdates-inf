@@ -104,7 +104,9 @@ func runCmd(cmdstr string, tee bool) (versions []CheckupdatesOutput, err error) 
 		for scanner.Scan() {
 
 			line := scanner.Text()
-			if tee && !strings.HasPrefix(line, ":") {
+			//if tee && !strings.HasPrefix(line, ":") {
+			if tee {
+				// next block char/char is best ???
 				fmt.Println(scanner.Text())
 			}
 
@@ -114,8 +116,20 @@ func runCmd(cmdstr string, tee bool) (versions []CheckupdatesOutput, err error) 
 					versions = append(versions, CheckupdatesOutput{args[0], args[1], args[3]})
 				} else {
 					capture = false
+					//break //BUG etéit pour tester block suivant ...
 					// continue for "tee"
 				}
+			}
+		}
+		if tee {
+			//fmt.Println("\ndownload state ...")
+			//var c rune
+			c := make([]byte, 1)
+			//reader := bufio.NewReader(stdout)
+			for err == nil {
+				_, err = stdout.Read(c)
+				//c, _, err = reader.ReadRune()
+				fmt.Printf("%s", string(c))
 			}
 		}
 		wg.Done()
@@ -137,6 +151,9 @@ func Checkupdates(download bool) (versions []CheckupdatesOutput) {
 	}
 	versions, err := runCmd(cmd, download)
 	if err != nil {
+		if err.Error() == "exit status 2" {
+			return versions
+		}
 		fmt.Println(gotext.Get("Shell error"), ":", err.Error())
 	}
 	sort.SliceStable(versions, func(i, j int) bool { return versions[i].Name < versions[j].Name })

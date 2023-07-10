@@ -42,12 +42,15 @@ func main() {
 
 	if *flagDownload && os.Getuid() != 0 {
 		println(Lg.T("Error"), Lg.T("you cannot perform this operation unless you are root"+"."))
-		os.Exit(2)
+		os.Exit(3)
 	}
 
 	fmt.Printf("%vCheckupdates %s...%v\n\n", theme.ColorGray, Lg.T("command"), theme.ColorNone)
 	updates := alpm.Checkupdates(*flagDownload)
 	println("\n")
+	if len(updates) == 0 {
+		os.Exit(2)
+	}
 	maxName := DisplayVersions(updates)
 
 	directory := fmt.Sprintf("/tmp/checkup-db-%d", os.Getuid())
