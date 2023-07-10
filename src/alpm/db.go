@@ -26,6 +26,7 @@ type (
 		REPLACES []string
 		PROVIDES []string
 
+		IsDep      bool
 		ReplacedBy string
 	}
 
@@ -52,6 +53,7 @@ func (p *Package) set(desc string) bool {
 	p.URL = getFieldString(adesc, "URL")
 	p.REPLACES = getFieldArray(adesc, "REPLACES")
 	p.PROVIDES = getFieldArray(adesc, "PROVIDES")
+	p.IsDep = getFieldString(adesc, "REASON") == "1"
 	return true
 }
 

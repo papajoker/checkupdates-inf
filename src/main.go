@@ -141,7 +141,7 @@ func main() {
 			}
 			for _, pkg := range matchs {
 				color := theme.ColorRed
-				if pkg.ReplacedBy != "" {
+				if pkg.ReplacedBy != "" || pkg.IsDep {
 					color = theme.ColorBold
 				}
 				fmt.Printf(
@@ -156,7 +156,7 @@ func main() {
 						Lg.T("replaced by"),
 					)
 				} else {
-					if len(matchs) < 40 {
+					if !pkg.IsDep && len(matchs) < 40 {
 						desc := alpm.AurRequestExists(pkg.NAME)
 						desc = Lg.T(desc)
 						fmt.Printf(
