@@ -126,9 +126,10 @@ func runCmd(cmdstr string, tee bool) (versions []CheckupdatesOutput, err error) 
 			//var c rune
 			c := make([]byte, 1)
 			//reader := bufio.NewReader(stdout)
-			for err == nil {
-				_, err = stdout.Read(c)
-				//c, _, err = reader.ReadRune()
+			var e error
+			for e == nil {
+				_, e = stdout.Read(c)
+				//c, _, e = reader.ReadRune()
 				fmt.Printf("%s", string(c))
 			}
 		}
